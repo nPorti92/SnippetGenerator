@@ -361,14 +361,11 @@
   }
 
   try {
-    const response = await fetch("https://hooks.zapier.com/hooks/catch/15263027/2zgnxnb/", {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        snippet,             // The HTML snippet as payload
-        testEmails           // Email recipients
-      })
-    });
+    const response = await fetch('https://<your-vercel-project>.vercel.app/api/proxy', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ snippet, testEmails }),
+});
 
     if (!response.ok) {
       throw new Error(`Server error: ${response.status}`);
