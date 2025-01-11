@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dynamic Thumbnail Generator</title>
+  <!-- Link your external stylesheet -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<!-- TOP BAR: App Title -->
+<div class="app-title-bar">
+  <h1 class="app-title">Dynamic Thumbnail Snippet Generator</h1>
+</div>
+
+<div class="container">
+  <!-- LEFT COLUMN (Sidebar) -->
+  <div class="sidebar">
+    <button class="new-button" id="newThumbnailBtn">New Thumbnail</button>
+
+    <!-- EXPORT HTML Button -->
+    <button class="new-button" id="exportHtmlBtn" style="margin-bottom: 16px;">
+      Export HTML
+    </button>
+
+    <div class="saved-codes-list" id="savedThumbnailsList">
+      <!-- JS populates saved items here -->
+    </div>
+  </div>
+
+  <!-- MIDDLE COLUMN (Form + Generated Code) -->
+  <div class="main-content">
+    <!-- CARD: Input Form -->
+    <div class="card">
+      <div class="card-content">
+        <!-- GIF URL Field -->
+        <div class="form-group">
+          <label for="gifUrl">GIF URL</label>
+          <input type="text" id="gifUrl" placeholder="e.g. https://example.com/awesome.gif" />
+        </div>
+
+        <!-- PNG URL Field (can contain {{Param1}}) -->
+        <div class="form-group">
+          <label for="pngUrl">Personalized PNG URL</label>
+          <input type="text" id="pngUrl" placeholder="e.g. https://t.blings.io/XYZ/{{Param1}}" />
+        </div>
+
+        <!-- Video URL Field -->
+        <div class="form-group">
+          <label for="videoUrl">Video Destination URL</label>
+          <input type="text" id="videoUrl" placeholder="e.g. https://example.com/video?user={{Param1}}" />
+        </div>
+
+        <!-- TEST DATA for Param1 -->
+        <div class="form-group">
+          <label for="param1Value">Test Value for {{Param1}}</label>
+          <input type="text" id="param1Value" placeholder="e.g. John" />
+        </div>
+
+        <!-- Dropdown for arrangement -->
+        <div class="form-group">
+          <label for="arrangement">Arrangement</label>
+          <select id="arrangement">
+            <option value="gif_on_top">GIF on Top (PNG as Background)</option>
+            <option value="png_on_top">PNG on Top (GIF as Background)</option>
+          </select>
+        </div>
+
+        <!-- Buttons (Generate, Save, Send Test) -->
+        <div class="generate-button-container">
+          <button id="generateBtn" class="generate-button">Generate Snippet</button>
+          <button id="saveBtn" class="generate-button" style="margin-left: 8px;">Save</button>
+          <button id="sendTestBtn" class="generate-button" style="margin-left: 8px;">Send a Test</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD: Generated Code -->
+    <div class="card generated-code">
+      <div class="generated-code-title">Generated HTML</div>
+      <div class="generated-code-content">
+        <textarea
+          id="outputSnippet"
+          readonly
+          style="width: 100%; height: 200px; background-color: transparent; border: none; color: #e1e1e1;"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN (Live Preview) -->
+  <div class="live-preview">
+    <div class="live-preview-title">Live Preview</div>
+    <!-- Dynamic snippet gets injected here -->
+    <div id="livePreview" class="live-preview-content">
+      <p style="color: #999;">
+        Your generated snippet will appear here automatically as you fill in the fields.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* 
+     Constants & DOM Elements 
+  */
+  const STORAGE_KEY       = "myDynamicThumbnails";
+  const ZAPIER_WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXX/XXXXXX";
+
+  const newThumbnailBtn   = document.getElementById('newThumbnailBtn');
+  const exportHtmlBtn     = document.getElementById('exportHtmlBtn');
+  const savedList         = document.getElementById('savedThumbnailsList');
+
+  const gifUrlInput       = document.getElementById('gifUrl');
+  const pngUrlInput       = document.getElementById('pngUrl');
+  const videoUrlInput     = document.getElementById('videoUrl');
+  const param1Input       = document.getElementById('param1Value');
+  const arrangementSelect = document.getElementById('arrangement');
+
+  const generateBtn       = document.getElementById('generateBtn');
+  const saveBtn           = document.getElementById('saveBtn');
+  const sendTestBtn       = document.getElementById('sendTestBtn');
+  const outputSnippet     = document.getElementById('outputSnippet');
+  const livePreview       = document.getElementById('livePreview');
+
+  /*
+    Replaces all occurrences of 'find' in 'str' with 'replace'
+  */
+  function replaceAll(str, find, replace) {
+    return str.split(find).join(replace);
+  }
+
+  /*
+    Build snippet from current form fields
+  */
+  function buildSnippet() {
+    const gifUrl   = gifUrlInput.value.trim();
+    let pngUrl     = pngUrlInput.value.trim();
+    let videoUrl   = videoUrlInput.value.trim();
+    const param1   = param1Input.value.trim();
+    const arrangement = arrangementSelect.value; // "gif_on_top" or "png_on_top"
+
+    // Replace {{Param1}} if needed
+    pngUrl   = replaceAll(pngUrl, '{{Param1}}', param1);
+    videoUrl = replaceAll(videoUrl, '{{Param1}}', param1);
+
+    // Now decide how to build it:
+    let snippet = "";
+
+    if (arrangement === "gif_on_top") {
+      /* 
+        SCENARIO 1: PNG is in the background; 
+                    GIF is the <img> up front
+      */
+      snippet = `
+<a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
+    <tbody><tr>
+      <td style="
+        padding: 0; 
+        margin: 0; 
+        height: 100%; 
+        background-repeat: no-repeat; 
+        background-position: center; 
+        background-size: contain;" 
+        background="${pngUrl}">
+        <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+          <tbody><tr>
+            <td style="padding: 0; margin: 0;" valign="middle" align="center">
+              <img style="max-width: 100%; height: auto; border: 0;" 
+                   alt="GIF" 
+                   src="${gifUrl}">
+            </td>
+          </tr></tbody>
+        </table>
+      </td>
+    </tr></tbody>
+  </table>
+</a>
+      `.trim();
+    } else {
+      /* 
+        SCENARIO 2: GIF is in the background;
+                    PNG is the <img> up front
+      */
+      snippet = `
+<a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
+    <tbody><tr>
+      <td style="
+        padding: 0; 
+        margin: 0; 
+        height: 100%; 
+        background-repeat: no-repeat; 
+        background-position: center; 
+        background-size: contain;" 
+        background="${gifUrl}">
+        <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+          <tbody><tr>
+            <td style="padding: 0; margin: 0;" valign="middle" align="center">
+              <img style="max-width: 100%; height: auto; border: 0;" 
+                   alt="PNG" 
+                   src="${pngUrl}">
+            </td>
+          </tr></tbody>
+        </table>
+      </td>
+    </tr></tbody>
+  </table>
+</a>
+      `.trim();
+    }
+
+    return snippet;
+  }  
+
+  /*
+    Build snippet from a localStorage item (re-using same logic)
+    NOTE: If we also want arrangement from the item, we can do it here.
+  */
+  function buildSnippetFromItem(item) {
+    const param1   = item.param1 || "";
+    let gifUrl     = item.gifUrl.trim();
+    let pngUrl     = item.pngUrl.trim();
+    let videoUrl   = item.videoUrl.trim();
+    const arrangement = item.arrangement || "gif_on_top";
+
+    // Replace placeholders
+    pngUrl   = replaceAll(pngUrl, '{{Param1}}', param1);
+    videoUrl = replaceAll(videoUrl, '{{Param1}}', param1);
+
+    // Rebuild snippet similarly to buildSnippet(), but now based on item.arrangement:
+    let snippet = "";
+
+    if (arrangement === "gif_on_top") {
+      // PNG background, GIF on top
+      snippet = `
+<a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
+    <tbody><tr>
+      <td style="padding: 0; margin: 0; height: 100%; background-repeat: no-repeat; background-position: center; background-size: contain;"
+          background="${pngUrl}">
+        <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+          <tbody><tr>
+            <td style="padding: 0; margin: 0;" valign="middle" align="center">
+              <img style="max-width: 100%; height: auto; border: 0;"
+                   alt="GIF"
+                   src="${gifUrl}">
+            </td>
+          </tr></tbody>
+        </table>
+      </td>
+    </tr></tbody>
+  </table>
+</a>
+      `.trim();
+    } else {
+      // GIF background, PNG on top
+      snippet = `
+<a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
+    <tbody><tr>
+      <td style="padding: 0; margin: 0; height: 100%; background-repeat: no-repeat; background-position: center; background-size: contain;"
+          background="${gifUrl}">
+        <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+          <tbody><tr>
+            <td style="padding: 0; margin: 0;" valign="middle" align="center">
+              <img style="max-width: 100%; height: auto; border: 0;"
+                   alt="PNG"
+                   src="${pngUrl}">
+            </td>
+          </tr></tbody>
+        </table>
+      </td>
+    </tr></tbody>
+  </table>
+</a>
+      `.trim();
+    }
+
+    return snippet;
+  }
+
+  /*
+    Update the live preview in real time
+  */
+  function updatePreview() {
+    const snippet = buildSnippet();
+    // If snippet is empty, show placeholder text
+    livePreview.innerHTML = snippet || "<p style='color:#999;'>Your generated snippet will appear here automatically as you fill in the fields.</p>";
+  }
+
+  /*
+    Generate Snippet: place it in the textarea
+  */
+  generateBtn.addEventListener('click', () => {
+    const snippet = buildSnippet();
+    outputSnippet.value = snippet;
+  });
+
+  /*
+    Save: store the current thumbnail in localStorage
+  */
+  saveBtn.addEventListener('click', () => {
+    const name = prompt("Name for this thumbnail?", "Untitled");
+    if (!name) return;
+
+    const newObj = {
+      id: Date.now().toString(),
+      name,
+      gifUrl: gifUrlInput.value.trim(),
+      pngUrl: pngUrlInput.value.trim(),
+      videoUrl: videoUrlInput.value.trim(),
+      param1: param1Input.value.trim(),
+      arrangement: arrangementSelect.value  // <-- This is the correct syntax
+    };
+
+    let existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    existing.push(newObj);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+
+    loadSavedThumbnails();
+    alert(`"${name}" saved!`);
+  });
+
+  /*
+    Send a Test: post snippet to Zapier or other webhook
+  */
+  sendTestBtn.addEventListener('click', async () => {
+    const snippet = buildSnippet();
+    const testEmails = prompt("Enter the test recipient email address(es):");
+    if (!testEmails) {
+      alert("No email address provided. Aborting test send.");
+      return;
+    }
+    try {
+      const response = await fetch(ZAPIER_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ snippet, testEmails })
+      });
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+      alert("Test request sent!");
+    } catch (err) {
+      console.error("Error sending test:", err);
+      alert(`Failed to send test. ${err.message}`);
+    }
+  });
+
+  /*
+    New Thumbnail: clear the form and preview
+  */
+  newThumbnailBtn.addEventListener('click', () => {
+    gifUrlInput.value   = "";
+    pngUrlInput.value   = "";
+    videoUrlInput.value = "";
+    param1Input.value   = "";
+    arrangementSelect.value = "gif_on_top";
+    outputSnippet.value = "";
+    livePreview.innerHTML = "<p style='color:#999;'>Your generated snippet will appear here automatically as you fill in the fields.</p>";
+  });
+
+  /*
+    Load saved thumbnails from localStorage and populate the sidebar
+  */
+  function loadSavedThumbnails() {
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    savedList.innerHTML = "";
+
+    existing.forEach(item => {
+      const div = document.createElement('div');
+      div.classList.add('saved-code-item');
+      div.innerText = item.name;
+      div.addEventListener('click', () => {
+        // Load item data into form
+        gifUrlInput.value        = item.gifUrl;
+        pngUrlInput.value        = item.pngUrl;
+        videoUrlInput.value      = item.videoUrl;
+        param1Input.value        = item.param1;
+        arrangementSelect.value  = item.arrangement || "gif_on_top";
+
+        outputSnippet.value = buildSnippet();
+        updatePreview();
+      });
+      savedList.appendChild(div);
+    });
+  }
+
+  /*
+    Export all HTML snippets in one text file
+  */
+  exportHtmlBtn.addEventListener('click', () => {
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    if (!existing.length) {
+      alert("No thumbnails to export.");
+      return;
+    }
+
+    // Combine all snippets
+    let fileContent = "";
+    existing.forEach(item => {
+      const snippet = buildSnippetFromItem(item);
+      fileContent += `\n=== Thumbnail: ${item.name} ===\n${snippet}\n`;
+    });
+
+    // Create a Blob of the combined content
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const downloadLink = document.createElement("a");
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = "thumbnails_snippets.txt";
+    downloadLink.click();
+    URL.revokeObjectURL(downloadLink.href);
+  });
+
+  // On page load, load existing items and init preview watchers
+  loadSavedThumbnails();
+  [gifUrlInput, pngUrlInput, videoUrlInput, param1Input, arrangementSelect].forEach(field => {
+    field.addEventListener('input', updatePreview);
+  });
+  updatePreview();
+</script>
+
+</body>
+</html>
