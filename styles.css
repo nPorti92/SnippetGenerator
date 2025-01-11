@@ -14,15 +14,21 @@ html, body {
 ===================================== */
 .app-title-bar {
   width: 100%;
-  background-color: #1a1a1a;
-  border-bottom: 1px solid #2a2a2a;
-  padding: 16px 24px;
+  padding-top: 50px;
   box-sizing: border-box;
 }
 .app-title {
   margin: 0;
-  font-size: 20px;
-  font-weight: 500;
+ display: flex;
+ justify-content: center;
+ font-size: 16px;
+
+  .prompt-extrabold {
+    font-family: "Prompt", serif;
+    font-weight: 800;
+    font-style: normal;
+    text-transform: uppercase;
+  }
 }
 
 /* =====================================
@@ -33,7 +39,6 @@ html, body {
   flex-direction: row;
   gap: 24px;
   padding: 24px;
-  padding-top: 50px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -50,30 +55,37 @@ html, body {
   flex-shrink: 0;
 }
 
-.new-button {
+.sidebar-buttons {
+  display: flex;
+  justify-content: right;
+  gap: 2px;  /* Space between buttons */
+  margin-bottom: 24px;
+}
+
+/* Lottie Button Styles */
+.lottie-button {
+  width: 28px;
+  height: 28px;
+  padding: 10px;
+  cursor: pointer;
+  background: #1a1a1a;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  background-color: #3c3b3b;
-  color: #ffffff;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-.new-button:hover {
-  background-color: #ff3366;
-  transform: translateY(-1px);
+  transition: background 0.3s ease;
+  /* Remove margin-bottom since we're using gap */
 }
 
-/* Saved items */
+.lottie-button:hover {
+  background: #3a3a3a;
+}
+
+/* Saved Items */
 .saved-codes-list {
   margin-top: 8px;
 }
+
 .saved-code-item {
   display: flex;
   align-items: center;
@@ -85,9 +97,11 @@ html, body {
   font-size: 14px;
   transition: all 0.2s ease;
 }
+
 .saved-code-item:hover {
-  background-color: #2a2a2a;
+  background-color: #3c3b3b;
 }
+
 
 /* =====================================
    MAIN CONTENT (Middle)
@@ -97,6 +111,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+
 }
 
 .card {
@@ -117,12 +132,14 @@ html, body {
 .form-group {
   margin-bottom: 16px;
   padding-right: 1.5rem;
+  
 }
 .form-group label {
   display: block;
   margin-bottom: 4px;
   font-size: 14px;
   font-weight: 500;
+  
 }
 
 /* Target the <select> element inside .form-group */
@@ -148,6 +165,7 @@ html, body {
 /* Optional: style the dropdown arrow (if you want a custom arrow) */
 .form-group.select-wrapper {
   position: relative;
+  
 }
 
 .form-group.select-wrapper::after {
@@ -158,11 +176,12 @@ html, body {
   transform: translateY(-50%);
   pointer-events: none;
   color: #999;
+  
 }
 
 .form-group input[type="text"] {
   width: 100%;
-  padding: 8px;
+  padding: 15px;
   border: 1px solid #2a2a2a;
   border-radius: 8px;
   background-color: #1a1a1a;
@@ -181,7 +200,7 @@ html, body {
   justify-content: flex-start;
 }
 .generate-button {
-  background-color: #ff154d;
+  background-color: #ab2645;
   color: #ffffff;
   padding: 12px 24px;
   border-radius: 8px;
@@ -281,4 +300,56 @@ html, body {
     This way, if your snippet is smaller than the container, 
     it gets placed in the absolute center.
   */
+}
+.generate-button-container {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  justify-content: flex-start;
+}
+
+/* Icon Button Base Style */
+.icon-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ab2645;
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-button:hover {
+  background-color: #d61344;
+}
+
+.icon-button:disabled {
+  background-color: #9e9e9e;
+  color: #ffffff;
+  cursor: not-allowed;
+}
+
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.icon-button:hover svg {
+  transform: scale(1.1);
+}
+
+/* Keep your existing button text style */
+.button-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Optional: Add a subtle animation for the disabled state */
+.icon-button:disabled svg {
+  opacity: 0.7;
 }
