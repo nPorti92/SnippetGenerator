@@ -52,26 +52,20 @@
       <div class="card-content">
         <!-- GIF URL Field -->
         <div class="form-group">
-          <label for="gifUrl">GIF URL</label>
+          <label for="gifUrl">GIF</label>
           <input type="text" id="gifUrl" placeholder="e.g. https://example.com/awesome.gif" />
         </div>
 
         <!-- PNG URL Field (can contain {{Param1}}) -->
         <div class="form-group">
-          <label for="pngUrl">Personalized PNG URL</label>
+          <label for="pngUrl">Thumbnail</label>
           <input type="text" id="pngUrl" placeholder="e.g. https://t.blings.io/XYZ/{{Param1}}" />
         </div>
 
         <!-- Video URL Field -->
         <div class="form-group">
-          <label for="videoUrl">Video Destination URL</label>
+          <label for="videoUrl">Video URL</label>
           <input type="text" id="videoUrl" placeholder="e.g. https://example.com/video?user={{Param1}}" />
-        </div>
-
-        <!-- TEST DATA for Param1 -->
-        <div class="form-group">
-          <label for="param1Value">Test Value for {{Param1}}</label>
-          <input type="text" id="param1Value" placeholder="e.g. John" />
         </div>
 
         <!-- Dropdown for arrangement -->
@@ -87,14 +81,13 @@
         <div class="generate-button-container">
           <button id="generateBtn" class="icon-button">
             <span class="button-text">Generate</span>
+
           </button>
           
           <button id="saveBtn" class="icon-button">
-            <span class="button-text">Save</span>
           </button>
           
           <button id="sendTestBtn" class="icon-button">
-            <span class="button-text">Send Test</span>
           </button>
         </div>
       </div>
