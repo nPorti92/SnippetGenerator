@@ -351,21 +351,20 @@
   /*
     Send a Test: post snippet to Zapier or other webhook
   */
-  sendTestBtn.addEventListener('click', async () => {
-  const snippet = buildSnippet(); // The generated code
-  const testEmails = prompt("Enter the test recipient email address(es), separated by commas:");
-  
+ sendTestBtn.addEventListener('click', async () => {
+  const snippet = buildSnippet();
+  const testEmails = prompt("Enter the test recipient email address(es):");
   if (!testEmails) {
     alert("No email address provided. Aborting test send.");
     return;
   }
 
   try {
-    const response = await fetch('https://snippet-generator-amber.vercel.app/api/proxy', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ snippet, testEmails }),
-});
+    const response = await fetch('/api/proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ snippet, testEmails }),
+    });
 
     if (!response.ok) {
       throw new Error(`Server error: ${response.status}`);
