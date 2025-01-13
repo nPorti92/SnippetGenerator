@@ -1,0 +1,60 @@
+
+=== Thumbnail: Fiverr InApp ===
+<a style="display: block; text-decoration: none; color: inherit;" href="https://fiverr.mp5.live/future_you?utm_source=in_app&business_name=&logo_url={{LOGO_URL}}&gig_url=%20https://cdn.prod.website-files.com/606a802fcaa89bc357508cad/61a66ca40534663ab0f2195f_Gig%20image%20guidelines%20-%20WIIF%20sellers-p-1600.png&buyer_country=France&review=Thank%20you%20for%20delivering%20my%20order%20as%20described.%20I%E2%80%99m%20glad%20it%20worked%20out%20as%20discussed%20with%20no%20issue.%20I%20will%20be%20using%20you%20again.&title=edit%20your%20video%20for%20youtube%20or%20whatever%20you%20want&purchase_date=2024-11-13&service_purchased=Logo%20Designer&buyer.buyer_username=Daniel&buyer.buyer_first_name=Daniel&buyer.buyer_profile_pic_url=https://fiverr-res.cloudinary.com/t_profile_original,q_auto,f_auto/attachments/profile/photo/6dcfb005bb6acdecdf195f35747b45b4-1729568931470/aab29785-2fbb-4e67-b395-18bfeb83366d.png&seller.seller_username=official3seven&seller.seller_profile_pic_url=https://fiverr-res.cloudinary.com/t_profile_original,q_auto,f_auto/attachments/profile/photo/d4381d62be00de3eefab8d03fc4004b0-1729991565841/69b765ae-efb2-43ec-8326-a59b5432890a.png">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
+    <tbody><tr>
+      <td style="padding: 0; margin: 0; height: 100%; background-repeat: no-repeat; background-position: center; background-size: contain;"
+          background="https://storage.blings.io/projects/84fa31de-3fb4-4a41-b72d-d0ef330d215b/assets/image/1734012610923_Future_Inapp_2.gif">
+        <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+          <tbody><tr>
+            <td style="padding: 0; margin: 0;" valign="middle" align="center">
+              <img style="max-width: 100%; height: auto; border: 0;"
+                   alt="PNG"
+                   src="https://t.blings.io/2c382ada-1cb9-4d84-9fa3-2d0bd3d2356e/%7B%7BParam1%7D%7D">
+            </td>
+          </tr></tbody>
+        </table>
+      </td>
+    </tr></tbody>
+  </table>
+</a>
+
+=== Thumbnail: Fiverr InApp ===
+<a style="display: block; text-decoration: none; color: inherit;" href="https://fiverr.mp5.live/future_you?utm_source=in_app&business_name=&logo_url={{LOGO_URL}}&gig_url=%20https://cdn.prod.website-files.com/606a802fcaa89bc357508cad/61a66ca40534663ab0f2195f_Gig%20image%20guidelines%20-%20WIIF%20sellers-p-1600.png&buyer_country=France&review=Thank%20you%20for%20delivering%20my%20order%20as%20described.%20I%E2%80%99m%20glad%20it%20worked%20out%20as%20discussed%20with%20no%20issue.%20I%20will%20be%20using%20you%20again.&title=edit%20your%20video%20for%20youtube%20or%20whatever%20you%20want&purchase_date=2024-11-13&service_purchased=Logo%20Designer&buyer.buyer_username=Daniel&buyer.buyer_first_name=Daniel&buyer.buyer_profile_pic_url=https://fiverr-res.cloudinary.com/t_profile_original,q_auto,f_auto/attachments/profile/photo/6dcfb005bb6acdecdf195f35747b45b4-1729568931470/aab29785-2fbb-4e67-b395-18bfeb83366d.png&seller.seller_username=official3seven&seller.seller_profile_pic_url=https://fiverr-res.cloudinary.com/t_profile_original,q_auto,f_auto/attachments/profile/photo/d4381d62be00de3">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
+    <tbody><tr>
+      <td style="padding: 0; margin: 0; height: 100%; background-repeat: no-repeat; background-position: center; background-size: contain;"
+          background="https://storage.blings.io/projects/84fa31de-3fb4-4a41-b72d-d0ef330d215b/assets/image/1734012610923_Future_Inapp_2.gif">
+        <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+          <tbody><tr>
+            <td style="padding: 0; margin: 0;" valign="middle" align="center">
+              <img style="max-width: 100%; height: auto; border: 0;"
+                   alt="PNG"
+                   src="https://t.blings.io/2c382ada-1cb9-4d84-9fa3-2d0bd3d2356e/%7B%7BParam1%7D%7D">
+            </td>
+          </tr></tbody>
+        </table>
+      </td>
+    </tr></tbody>
+  </table>
+</a>
+
+=== Thumbnail: Cavs ===
+<a style="display: block; text-decoration: none; color: inherit;" href="https://cavs.mp5.live/cavs_stats?win_rate=67&steals=123&Assists=456&points=1597&dunks=111&games=7&NAME=Maggie">
+  <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
+    <tbody><tr>
+      <td style="padding: 0; margin: 0; height: 100%; background-repeat: no-repeat; background-position: center; background-size: contain;"
+          background="https://t.blings.io/07906f78-bac7-485e-83d9-fe7c1fae0b2d/Maggie">
+        <table style="border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">
+          <tbody><tr>
+            <td style="padding: 0; margin: 0;" valign="middle" align="center">
+              <img style="max-width: 100%; height: auto; border: 0;"
+                   alt="GIF"
+                   src="https://storage.blings.io/projects/9df0620c-316e-459b-87d5-bca9bce4b329/assets/image/1ebe97_GIF_iteration_2.gif">
+            </td>
+          </tr></tbody>
+        </table>
+      </td>
+    </tr></tbody>
+  </table>
+</a>

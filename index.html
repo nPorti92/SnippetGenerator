@@ -10,14 +10,14 @@
   <!--
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link 
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather:wght@700&display=swap" 
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather:wght@700&display=swap"
         rel="stylesheet"
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap"
     rel="stylesheet"
   >
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
@@ -30,25 +30,57 @@
 </div>
 
 <div class="container">
-  <!-- LEFT COLUMN (Sidebar) -->
+  <!-- LEFT COLUMN (Sidebar + Projects) -->
   <div class="container">
-    <!-- LEFT COLUMN (Sidebar) -->
     <div class="sidebar">
-      <!-- Wrap buttons in a container -->
+      <!-- Projects Container -->
+      <div class="projects-container">
+        <label for="projectSelect"><strong>Projects</strong></label>
+
+        <!-- Wrap the select in a "project-select-wrapper" so we can style the arrow -->
+        <div class="project-select-wrapper">
+          <select id="projectSelect"></select>
+        </div>
+
+        <div class="project-buttons">
+          <!-- "New Project" with icon + text -->
+          <button class="icon-button" id="newProjectBtn">
+            <!-- Example inline SVG (plus icon); replace with your own -->
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor"
+                    d="M19,11H13V5A1,1 0 0,0 12,4A1,1 0 0,0 11,5V11H5A1,1 0 0,0 4,12A1,1 0 0,0 5,13H11V19A1,1 
+                    0 0,0 12,20A1,1 0 0,0 13,19V13H19A1,1 0 0,0 20,12A1,1 0 0,0 19,11Z"/>
+            </svg>
+            <span class="button-text">New Project</span>
+          </button>
+
+          <!-- "Delete Project" with icon + text -->
+          <button class="icon-button" id="deleteProjectBtn">
+            <!-- Example inline SVG (trash icon); replace with your own -->
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor"
+                    d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 
+                    19,19V6H20V4H15V3H9M7,6H17V19H7V6Z"/>
+            </svg>
+            <span class="button-text">Delete Project</span>
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+
+      <!-- Main Sidebar Buttons (New Thumbnail, Export) -->
       <div class="sidebar-buttons">
         <div id="newThumbnailBtn" class="lottie-button" title="Create New Thumbnail">
           <div class="lottie-animation" data-animation="new"></div>
         </div>
-
         <div id="exportHtmlBtn" class="lottie-button" title="Export HTML">
           <div class="lottie-animation" data-animation="export"></div>
         </div>
       </div>
+      <div class="sidebar-divider"></div>
 
-      <!-- Saved Codes List -->
-      <div class="saved-codes-list" id="savedThumbnailsList">
-        <!-- JS will populate this -->
-      </div>
+      <!-- Saved Codes List (where we show the thumbnails for the current project) -->
+      <div class="saved-codes-list" id="savedThumbnailsList"></div>
     </div>
 
     <!-- MIDDLE COLUMN (Form + Generated Code) -->
@@ -127,30 +159,41 @@
 </div>
 
 <script>
-  /* 
-     Constants & DOM Elements 
+  /*
+    Data Model:
+    localStorage Key = "myDynamicThumbnails"
+
+    We'll also track the currentProject in JS, so we know which array to display.
+    And track currentThumbnailId for highlighting the selected thumbnail.
   */
-  const STORAGE_KEY        = "myDynamicThumbnails";
-  const ZAPIER_WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/XXXXXX/XXXXXX";
 
-  const newThumbnailBtn    = document.getElementById('newThumbnailBtn');
-  const exportHtmlBtn      = document.getElementById('exportHtmlBtn');
-  const savedList          = document.getElementById('savedThumbnailsList');
+  const STORAGE_KEY         = "myDynamicThumbnails";
+  const ZAPIER_WEBHOOK_URL  = "https://hooks.zapier.com/hooks/catch/XXXXXX/XXXXXX";
 
-  const gifUrlInput        = document.getElementById('gifUrl');
-  const pngUrlInput        = document.getElementById('pngUrl');
-  const videoUrlInput      = document.getElementById('videoUrl');
-  const arrangementSelect  = document.getElementById('arrangement');
+  let currentProject = "";     // Keep track of which project is active
+  let currentThumbnailId = null;  // If we want to highlight a selected thumbnail
 
-  const generateBtn        = document.getElementById('generateBtn');
-  const saveBtn            = document.getElementById('saveBtn');
-  const sendTestBtn        = document.getElementById('sendTestBtn');
-  const outputSnippet      = document.getElementById('outputSnippet');
-  const livePreview        = document.getElementById('livePreview');
+  // DOM Elements
+  const projectSelect       = document.getElementById('projectSelect');
+  const newProjectBtn       = document.getElementById('newProjectBtn');
+  const deleteProjectBtn    = document.getElementById('deleteProjectBtn');
+  const newThumbnailBtn     = document.getElementById('newThumbnailBtn');
+  const exportHtmlBtn       = document.getElementById('exportHtmlBtn');
+  const savedList           = document.getElementById('savedThumbnailsList');
+
+  const gifUrlInput         = document.getElementById('gifUrl');
+  const pngUrlInput         = document.getElementById('pngUrl');
+  const videoUrlInput       = document.getElementById('videoUrl');
+  const arrangementSelect   = document.getElementById('arrangement');
+
+  const generateBtn         = document.getElementById('generateBtn');
+  const saveBtn             = document.getElementById('saveBtn');
+  const sendTestBtn         = document.getElementById('sendTestBtn');
+  const outputSnippet       = document.getElementById('outputSnippet');
+  const livePreview         = document.getElementById('livePreview');
 
   /*
-    Replaces all occurrences of 'find' in 'str' with 'replace'.
-    If you no longer need to replace `{{Param1}}`, you can remove this function entirely.
+    Replaces all occurrences of 'find' in 'str' with 'replace'
   */
   function replaceAll(str, find, replace) {
     return str.split(find).join(replace);
@@ -161,21 +204,16 @@
   */
   function buildSnippet() {
     const gifUrl      = gifUrlInput.value.trim();
-    let   pngUrl      = pngUrlInput.value.trim();
-    let   videoUrl    = videoUrlInput.value.trim();
+    let pngUrl        = pngUrlInput.value.trim();
+    let videoUrl      = videoUrlInput.value.trim();
     const arrangement = arrangementSelect.value; // "gif_on_top" or "png_on_top"
 
-    // (Optional) If you truly don't need {{Param1}} logic, remove these lines:
+    // Example: if you don't need {{Param1}} replacements, comment them out
     // pngUrl   = replaceAll(pngUrl, '{{Param1}}', '');
     // videoUrl = replaceAll(videoUrl, '{{Param1}}', '');
 
     let snippet = "";
-
     if (arrangement === "gif_on_top") {
-      /* 
-        SCENARIO 1: PNG is in the background; 
-                    GIF is the <img> up front
-      */
       snippet = `
 <a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
   <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
@@ -203,10 +241,6 @@
 </a>
       `.trim();
     } else {
-      /* 
-        SCENARIO 2: GIF is in the background;
-                    PNG is the <img> up front
-      */
       snippet = `
 <a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
   <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
@@ -234,27 +268,20 @@
 </a>
       `.trim();
     }
-
     return snippet;
   }
 
   /*
-    Build snippet from a localStorage item
-    (Re-using similar logic to buildSnippet but using the saved item properties)
+    Build snippet from a localStorage item (for exporting all thumbnails)
   */
   function buildSnippetFromItem(item) {
-    let gifUrl       = item.gifUrl.trim();
-    let pngUrl       = item.pngUrl.trim();
-    let videoUrl     = item.videoUrl.trim();
-    const arrangement= item.arrangement || "gif_on_top";
-
-    // (Optional) If you had placeholders, remove or replace them. 
-    // pngUrl   = replaceAll(pngUrl, '{{Param1}}', '');
-    // videoUrl = replaceAll(videoUrl, '{{Param1}}', '');
+    const gifUrl       = item.gifUrl.trim();
+    const pngUrl       = item.pngUrl.trim();
+    const videoUrl     = item.videoUrl.trim();
+    const arrangement  = item.arrangement || "gif_on_top";
 
     let snippet = "";
     if (arrangement === "gif_on_top") {
-      // PNG background, GIF on top
       snippet = `
 <a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
   <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
@@ -276,7 +303,6 @@
 </a>
       `.trim();
     } else {
-      // GIF background, PNG on top
       snippet = `
 <a style="display: block; text-decoration: none; color: inherit;" href="${videoUrl}">
   <table style="width: 100%; text-align: center; border-collapse: collapse; height:100%;">
@@ -298,7 +324,6 @@
 </a>
       `.trim();
     }
-
     return snippet;
   }
 
@@ -307,25 +332,30 @@
   */
   function updatePreview() {
     const snippet = buildSnippet();
-    // If snippet is empty, show placeholder text
-    livePreview.innerHTML = snippet || "<p style='color:#999;'>Your generated snippet will appear here automatically as you fill in the fields.</p>";
+    livePreview.innerHTML = snippet 
+      || "<p style='color:#999;'>Your generated snippet will appear here automatically as you fill in the fields.</p>";
   }
 
   /*
     Generate Snippet: place it in the textarea
   */
   generateBtn.addEventListener('click', () => {
-    const snippet = buildSnippet();
-    outputSnippet.value = snippet;
+    outputSnippet.value = buildSnippet();
   });
 
   /*
-    Save: store the current thumbnail in localStorage
+    Save the current thumbnail in localStorage under the current project
   */
   saveBtn.addEventListener('click', () => {
+    if (!currentProject) {
+      alert("Please select or create a project first.");
+      return;
+    }
+
     const name = prompt("Name for this thumbnail?", "Untitled");
     if (!name) return;
 
+    // Build new thumbnail item
     const newObj = {
       id: Date.now().toString(),
       name,
@@ -335,12 +365,20 @@
       arrangement: arrangementSelect.value
     };
 
-    let existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    existing.push(newObj);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+    // Get all projects object
+    const projects = loadAllProjects();
 
-    loadSavedThumbnails();
-    alert(`"${name}" saved!`);
+    // Insert into the current project's array
+    if (!projects[currentProject]) {
+      projects[currentProject] = [];
+    }
+    projects[currentProject].push(newObj);
+
+    // Save back
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+
+    loadSavedThumbnails(); // Reload the list
+    alert(`"${name}" saved to project "${currentProject}"!`);
   });
 
   /*
@@ -385,44 +423,24 @@
   });
 
   /*
-    Load saved thumbnails from localStorage and populate the sidebar
-  */
-  function loadSavedThumbnails() {
-    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    savedList.innerHTML = "";
-
-    existing.forEach(item => {
-      const div = document.createElement('div');
-      div.classList.add('saved-code-item');
-      div.innerText = item.name;
-      div.addEventListener('click', () => {
-        // Load item data into form
-        gifUrlInput.value       = item.gifUrl;
-        pngUrlInput.value       = item.pngUrl;
-        videoUrlInput.value     = item.videoUrl;
-        arrangementSelect.value = item.arrangement || "gif_on_top";
-
-        // Update snippet & preview
-        outputSnippet.value = buildSnippet();
-        updatePreview();
-      });
-      savedList.appendChild(div);
-    });
-  }
-
-  /*
-    Export all HTML snippets in one text file
+    Export all HTML snippets for the current project in one text file
   */
   exportHtmlBtn.addEventListener('click', () => {
-    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    if (!existing.length) {
-      alert("No thumbnails to export.");
+    if (!currentProject) {
+      alert("Please select or create a project first.");
       return;
     }
 
-    // Combine all snippets
+    const projects = loadAllProjects();
+    const items = projects[currentProject] || [];
+    if (!items.length) {
+      alert("No thumbnails to export in this project.");
+      return;
+    }
+
+    // Combine all snippets for the current project
     let fileContent = "";
-    existing.forEach(item => {
+    items.forEach(item => {
       const snippet = buildSnippetFromItem(item);
       fileContent += `\n=== Thumbnail: ${item.name} ===\n${snippet}\n`;
     });
@@ -431,17 +449,217 @@
     const blob = new Blob([fileContent], { type: "text/plain" });
     const downloadLink = document.createElement("a");
     downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = "thumbnails_snippets.txt";
+    downloadLink.download = `${currentProject.replace(/\s+/g, '_')}_snippets.txt`;
     downloadLink.click();
     URL.revokeObjectURL(downloadLink.href);
   });
 
-  // On page load, load existing items and init watchers
-  loadSavedThumbnails();
-  [gifUrlInput, pngUrlInput, videoUrlInput, arrangementSelect].forEach(field => {
-    field.addEventListener('input', updatePreview);
+  /*
+    New Project Button
+  */
+  newProjectBtn.addEventListener('click', () => {
+    const projectName = prompt("Name of the new project?");
+    if (!projectName) return;
+
+    const projects = loadAllProjects();
+    if (projects[projectName]) {
+      alert("A project with that name already exists. Please pick a different name.");
+      return;
+    }
+
+    // Create an empty array for that project
+    projects[projectName] = [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+
+    // Refresh the project dropdown
+    populateProjectDropdown();
+    // Set currentProject to the new one
+    currentProject = projectName;
+    projectSelect.value = projectName;
+    // Also clear the saved list
+    loadSavedThumbnails();
+    alert(`Project "${projectName}" created and selected.`);
   });
-  updatePreview();
+
+  /*
+    Delete Project Button
+  */
+  deleteProjectBtn.addEventListener('click', () => {
+    if (!currentProject) {
+      alert("No project selected to delete.");
+      return;
+    }
+    if (!confirm(`Are you sure you want to DELETE the entire project "${currentProject}"? This cannot be undone.`)) {
+      return;
+    }
+
+    const projects = loadAllProjects();
+    delete projects[currentProject];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+
+    // Clear the project from memory
+    currentProject = "";
+    // Repopulate the dropdown
+    populateProjectDropdown();
+    // Clear the thumbnails list
+    savedList.innerHTML = "";
+    alert("Project deleted.");
+  });
+
+  /*
+    Populate the Projects dropdown from localStorage
+  */
+  function populateProjectDropdown() {
+    // Save the old selection to restore if it still exists
+    const oldSelection = currentProject;
+
+    projectSelect.innerHTML = ""; // clear out existing
+    const projects = loadAllProjects();
+    const keys = Object.keys(projects);
+
+    if (!keys.length) {
+      // No projects yet
+      currentProject = "";
+      const opt = document.createElement('option');
+      opt.value = "";
+      opt.textContent = "-- No Projects --";
+      projectSelect.appendChild(opt);
+    } else {
+      keys.forEach(projectName => {
+        const opt = document.createElement('option');
+        opt.value = projectName;
+        opt.textContent = projectName;
+        projectSelect.appendChild(opt);
+      });
+
+      // If the old project still exists, select it; otherwise pick the first
+      if (oldSelection && keys.includes(oldSelection)) {
+        currentProject = oldSelection;
+      } else {
+        currentProject = keys[0];
+      }
+      projectSelect.value = currentProject;
+    }
+  }
+
+  /*
+    Load all Projects from localStorage
+  */
+  function loadAllProjects() {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      // Must be an object
+      if (typeof data === 'object' && data !== null) {
+        return data;
+      }
+      return {};
+    } catch (err) {
+      console.warn("Error parsing localStorage, resetting...");
+      return {};
+    }
+  }
+
+  /*
+    Load saved thumbnails for the current project
+  */
+  function loadSavedThumbnails() {
+    savedList.innerHTML = "";
+
+    // Get the array of items for the current project
+    const projects = loadAllProjects();
+    const items = projects[currentProject] || [];
+
+    items.forEach(item => {
+      // Create the <div> for each item row
+      const div = document.createElement('div');
+      div.classList.add('saved-code-item');
+
+      // If this item is the currently selected one, highlight it
+      if (item.id === currentThumbnailId) {
+        div.classList.add('selected');
+      }
+
+      // On click, set it as selected and load its data
+      div.addEventListener('click', () => {
+        currentThumbnailId = item.id;
+
+        // Load fields
+        gifUrlInput.value   = item.gifUrl;
+        pngUrlInput.value   = item.pngUrl;
+        videoUrlInput.value = item.videoUrl;
+        arrangementSelect.value = item.arrangement || "gif_on_top";
+
+        outputSnippet.value = buildSnippet();
+        updatePreview();
+
+        // Re-render to highlight the new selection
+        loadSavedThumbnails();
+      });
+
+      // Title text
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = item.name;
+
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.classList.add('icon-button--small');
+      deleteBtn.innerHTML = `
+        <svg viewBox="0 0 24 24">
+          <path fill="currentColor"
+                d="M9,3V4H4V6H5V19A2,2 0 0,0 
+                 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,
+                 6H17V19H7V6Z" />
+        </svg>
+      `;
+      // Stop row click event when deleting
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm(`Delete thumbnail "${item.name}"?`)) {
+          removeThumbnailFromProject(item.id);
+        }
+      });
+
+      // Build the row
+      div.appendChild(titleSpan);
+      div.appendChild(deleteBtn);
+      savedList.appendChild(div);
+    });
+  }
+
+  /*
+    Remove a specific thumbnail from the current project (by item.id)
+  */
+  function removeThumbnailFromProject(itemId) {
+    const projects = loadAllProjects();
+    let items = projects[currentProject];
+    if (!items) return;
+
+    // Filter out the item
+    items = items.filter(x => x.id !== itemId);
+    projects[currentProject] = items; // Save back
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    loadSavedThumbnails();
+  }
+
+  // Event: Switch Projects in the dropdown
+  projectSelect.addEventListener('change', () => {
+    currentProject = projectSelect.value;
+    loadSavedThumbnails();
+  });
+
+  // On page load, init
+  function init() {
+    populateProjectDropdown();
+    loadSavedThumbnails();
+
+    [gifUrlInput, pngUrlInput, videoUrlInput, arrangementSelect]
+      .forEach(field => field.addEventListener('input', updatePreview));
+
+    updatePreview();
+  }
+
+  init();
 </script>
 
 <script>
@@ -481,12 +699,12 @@
   document.querySelectorAll('.lottie-button').forEach(button => {
     const animationType = button.querySelector('.lottie-animation').dataset.animation;
     const animation = lottieInstances[animationType];
-  
+
     button.addEventListener('mouseenter', () => {
       animation.setDirection(1);
       animation.play();
     });
-  
+
     button.addEventListener('mouseleave', () => {
       animation.setDirection(-1);
       animation.play();
@@ -499,17 +717,17 @@
       .then(response => response.text())
       .then(svgContent => {
         const button = document.getElementById(buttonId);
-        button.insertAdjacentHTML('afterbegin', svgContent);
+        if (button) {
+          button.insertAdjacentHTML('afterbegin', svgContent);
+        }
       })
       .catch(err => console.error(`Error loading SVG: ${svgPath}`, err));
   }
 
   // Load icons for each button
   loadSvgIcon('generateBtn', 'iconly-icon-export-1736620543.svg');
-  loadSvgIcon('saveBtn', './iconly-icon-export-1736620162.svg'); // Replace with the correct path
-  loadSvgIcon('sendTestBtn', 'iconly-icon-send-1736620564.svg'); // Replace with the correct path
-  
-  // Remove any duplicate click handlers from older code if necessary
+  loadSvgIcon('saveBtn', './iconly-icon-export-1736620162.svg'); // Replace with correct path
+  loadSvgIcon('sendTestBtn', 'iconly-icon-send-1736620564.svg'); // Replace with correct path
 </script>
 
 </body>
